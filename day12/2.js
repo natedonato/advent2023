@@ -38,8 +38,6 @@ for (const line of input) {
 
 console.log("sum", sum);
 
-
-
 function testGroups(previous_groups, current_group_length, target_groups){
   
   // check prev groups
@@ -191,6 +189,7 @@ function solve(spring, current_index, previous_groups, current_group_length, tar
   }
 }
 
+
 // start at index 0
 // 
 // if char is a ? and not currently in a group
@@ -211,86 +210,3 @@ function solve(spring, current_index, previous_groups, current_group_length, tar
 //         if current group is long enough, end group, add . and continue
 // if end of line
 //    end current group if in group, check vs target groups, return 1 or 0
-
-
-
-
-
-
-
-function solveOld(current_springs = undefined, index, target_groups, memo) {
-
-  let count = makeCount(current_springs.slice(0, index + 1));
-
-  // base case: no more unknown values
-  if (countUnknowns(current_springs) === 0) {
-    count = makeCount(current_springs);
-    if (target_groups === count) {
-      return 1;
-    } else {
-      return 0;
-    }
-  }
-  // base case 2: already messed up groups where we currently are
-  if (
-    current_springs[index] === "." &&
-    target_groups.slice(0, count.length) !== count
-  ) {
-    // memo[current_springs.join("") + ":" + index] = 0;
-    return 0;
-  }
-
-  // if we're on an already known spot, keep going.
-  if (current_springs[index] === "#" || current_springs[index] === ".") {
-    let res = solveOld(current_springs, index + 1, target_groups, memo);
-    // memo[current_springs.join("") + ":" + index] = res;
-
-    return res;
-  }
-
-  let newLeft = [...current_springs];
-  newLeft[index] = ".";
-  let newRight = [...current_springs];
-  newRight[index] = "#";
-
-  let res =
-    solveOld(newLeft, index + 1, target_groups, memo) +
-    solveOld(newRight, index + 1, target_groups, memo);
-  memo[current_springs.join("") + ":" + index] = res;
-
-  return res;
-}
-
-// console.log(sum);
-
-/// count the questio nmarks in a spring
-function countUnknowns(springs) {
-  let count = 0;
-  for (let i = 0; i < springs.length; i++) {
-    if (springs[i] === "?") {
-      count += 1;
-    }
-  }
-  return count;
-}
-
-// serialize the groups in a string
-function makeCount(springs) {
-  let i = 0;
-  let count = [];
-
-  while (i < springs.length) {
-    let next = springs[i];
-    if (next === "#") {
-      let j = 1;
-      while (springs[i + j] === "#") {
-        j += 1;
-      }
-      count.push(j);
-      i += j;
-    }
-    i += 1;
-  }
-
-  return count.join(",");
-}
